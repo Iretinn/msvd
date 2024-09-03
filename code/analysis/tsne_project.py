@@ -2,16 +2,12 @@
 @author: Junguang Jiang
 @contact: JiangJunguang1123@outlook.com
 """
-import torch
 import pickle
 import os
-import matplotlib
 
-# matplotlib.use('TkAgg')
 from sklearn.manifold import TSNE
 import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib.colors as col
 
 
 def calculate_centroids(_features, _labels):
@@ -147,19 +143,6 @@ def main():
         axs[1, index].set_xticks([])
         axs[1, index].set_yticks([])
 
-        # X_tsne_d1 = X_tsne[D_label == 1]
-        # V_label_d1 = V_label[D_label == 1]
-        # X_tsne_d1_0 = X_tsne_d1[V_label_d1 == 0]
-        # X_tsne_d1_1 = X_tsne_d1[V_label_d1 == 1]
-        #
-        # axs[2, index].scatter(X_tsne_d1_0[:, 0], X_tsne_d1_0[:, 1], c='limegreen', marker='^', label='Non-vul', s=1, alpha=0.5)
-        # axs[2, index].scatter(X_tsne_d1_1[:, 0], X_tsne_d1_1[:, 1], c='red', marker='s', label='Vul', s=1, alpha=0.5)
-        # if index == 0:
-        #     axs[2, index].legend(markerscale=5.0, loc='upper center', fontsize=16, bbox_to_anchor=(2.15, -0.01), ncol=2, frameon=False)
-        # title2 = '(' + titles[index] + '.3) ' + methods[index]
-        # axs[2, index].set_xlabel(title2, fontsize=20, labelpad=45)
-        # axs[2, index].set_xticks([])
-        # axs[2, index].set_yticks([])
     plt.subplots_adjust(wspace=0.1, hspace=0.4)
     # plt.savefig('project.eps', format='eps', dpi=1000)
     # plt.savefig('project.pdf', format='pdf', dpi=1000)
