@@ -1,19 +1,3 @@
-# coding=utf-8
-# Copyright 2018 The Google AI Language Team Authors and The HuggingFace Inc. team.
-# Copyright (c) 2018, NVIDIA CORPORATION.  All rights reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 from __future__ import absolute_import, division, print_function
 import argparse
 import logging
@@ -22,22 +6,13 @@ import random
 import math
 import numpy as np
 import torch
-from torch.utils.data import DataLoader, Dataset, SequentialSampler, RandomSampler, TensorDataset
-from transformers import (WEIGHTS_NAME, get_linear_schedule_with_warmup,
-                          RobertaConfig, RobertaModel, RobertaTokenizer)
+from transformers import (get_linear_schedule_with_warmup, RobertaTokenizer)
 from tqdm import tqdm
-import multiprocessing
 import models
 import utils
 from utils import multi_data_loader_st, data_loader
 import pandas as pd
-# metrics
 from sklearn.metrics import accuracy_score, recall_score, precision_score, f1_score, roc_auc_score
-from sklearn.metrics import auc
-# model reasoning
-from captum.attr import LayerIntegratedGradients, DeepLift, DeepLiftShap, GradientShap, Saliency
-# word-level tokenizer
-from tokenizers import Tokenizer
 
 logger = logging.getLogger(__name__)
 
@@ -171,7 +146,7 @@ def train(model, tokenizer, args):
         for i in range(number_domain):
             info += ', domain {}: clf_loss: {:.4f}, transfer_loss: {:.4f}'.format(i+1, train_loss_clf[i].avg, train_loss_transfer[i].avg)
 
-        # Test
+        # Valid
         stop += 1
         result = test(args, model, target_test_inputs, target_test_labels)
         info += ', test_loss {:4f}, test_f1: {:.4f}'.format(result["test_loss"], result["test_f1"])
@@ -195,18 +170,6 @@ def train(model, tokenizer, args):
             print(info)
             break
         print(info)
-    if args.store_loss:
-        logger.info("save loss!")
-        with open("./clf_loss_log.txt", 'w') as clf_los:
-            for cll in clf_loss_log:
-                clf_los.write(str(cll))
-                clf_los.write('\n')
-        with open("./transfer_loss_log.txt", 'w') as tra_los:
-            for tll in transfer_loss_log:
-                tra_los.write(str(tll))
-                tra_los.write('\n')
-        with open("./total_loss_log.txt", 'w') as total_los:
-            total_los.write(str(total_loss_log))
     print('Transfer result: {:.4f}'.format(best_f1))
 
 
@@ -287,21 +250,13 @@ def get_parser():
                         help="The model checkpoint for weights initialization.")
     parser.add_argument("--config_name", default="", type=str,
                         help="Optional pretrained config name or path if not the same as model_name_or_path")
-    parser.add_argument("--use_non_pretrained_model", action='store_true', default=False,
-                        help="Whether to use non-pretrained model.")
-    parser.add_argument("--tokenizer_name", default="", type=str,
-                        help="Optional pretrained tokenizer name or path if not the same as model_name_or_path")
     parser.add_argument("--code_length", default=256, type=int,
                         help="Optional Code input sequence length after tokenization.")
 
     parser.add_argument("--do_train", action='store_true',
                         help="run training.")
-    parser.add_argument("--do_analysis", action='store_true',
-                        help="run analysis (t-sne) on well-trained model.")
     parser.add_argument("--do_test", action='store_true',
                         help="run testing on well-trained model.")
-    parser.add_argument("--store_loss", action='store_true',
-                        help="save training losses.")
 
     # train set
     parser.add_argument("--train_batch_size", default=4, type=int,
@@ -375,10 +330,6 @@ def main():
         model.load_state_dict(torch.load(output_dir, map_location=args.device))
         model.to(args.device)
         test(args, model, target_test_inputs, target_test_labels)
-
-    if args.do_analysis:
-        pass
-
 
 if __name__ == "__main__":
     main()
