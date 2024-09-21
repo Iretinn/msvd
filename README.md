@@ -39,7 +39,8 @@ This is an implementation of the method described in: "multi-source cross-domain
    ```
 
 # Experiment
-RQ1：Cross-language vulnerability detection
+**RQ1：Cross-language vulnerability detection**
+
 run the following commands:
 ```
 cd code/msvd
@@ -81,7 +82,8 @@ python madv.py
 &emsp;--source_valid_file_list java_test.csv cpp_train.csv<br />
 &emsp;--target_test_file c_test.csv<br />
 
-RQ2: Cross-project vulnerability detection
+**RQ2: Cross-project vulnerability detection**
+
 run the following commands:
 ```
 cd code/msvd
